@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Tyler Probst — software engineer building thoughtful web experiences."
+    />
+    <title>Tyler Probst</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="site-header">
+        <a class="logo" href="/">Tyler Probst</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="#about">About</a>
+          <a href="#experience">Experience</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-content">
+            <p class="eyebrow">Software Engineer</p>
+            <h1>Building clear, reliable web experiences.</h1>
+            <p class="lead">
+              I work across the stack — from polished interfaces to the systems
+              behind them — with a focus on craft, clarity, and shipping work
+              that holds up.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#contact">Get in touch</a>
+              <a
+                class="button button-secondary"
+                href="https://github.com/tylerprobst"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View GitHub
+              </a>
+            </div>
+          </div>
+
+          <figure class="hero-portrait">
+            <img
+              src="assets/profile.png"
+              alt="Portrait of Tyler Probst"
+              width="520"
+              height="520"
+            />
+          </figure>
+        </section>
+
+        <section class="highlights" aria-label="Focus areas">
+          <article class="highlight-card">
+            <h2>Frontend</h2>
+            <p>
+              JavaScript, modern CSS, and interface design — building products
+              that feel fast and intentional.
+            </p>
+          </article>
+          <article class="highlight-card">
+            <h2>Backend</h2>
+            <p>
+              Python, Ruby, SQL, and API design — connecting reliable services
+              to the experiences people use every day.
+            </p>
+          </article>
+          <article class="highlight-card">
+            <h2>Delivery</h2>
+            <p>
+              Git, cloud deployment, and iterative development — from idea to
+              production with care for the details.
+            </p>
+          </article>
+        </section>
+
+        <section class="about" id="about">
+          <div class="about-copy">
+            <p class="section-label">About</p>
+            <h2>About me</h2>
+            <p>
+              From browser-based tools and games to full-stack applications, I
+              enjoy turning ideas into software people can actually use. This
+              site is my home base for work history, projects, and ways to
+              connect.
+            </p>
+          </div>
+        </section>
+
+        <section class="experience" id="experience">
+          <div class="section-header">
+            <p class="section-label">Experience</p>
+            <h2>Previous work</h2>
+            <p class="section-intro">
+              A snapshot of recent roles. More history and project detail will
+              be added over time.
+            </p>
+          </div>
+
+          <article class="experience-entry">
+            <div class="experience-meta">
+              <time datetime="2022-09/2025-01">Sep 2022 – Jan 2025</time>
+              <span>Rohnert Park, CA</span>
+            </div>
+            <div class="experience-body">
+              <h3>
+                <a
+                  href="https://www.gratonresortcasino.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Graton Resort &amp; Casino
+                </a>
+              </h3>
+              <p class="experience-role">Web Developer Integration Engineer</p>
+              <p class="experience-summary">
+                Supported the digital presence for one of Sonoma County&rsquo;s
+                largest resort and casino destinations, with a focus on
+                guest-facing web experiences and platform integrations.
+              </p>
+              <ul class="experience-details">
+                <li>
+                  Built and maintained front-end web experiences for booking,
+                  events, and resort services across high-traffic property sites.
+                </li>
+                <li>
+                  Integrated third-party hospitality, e-commerce, and booking
+                  platforms into the resort&rsquo;s web stack.
+                </li>
+                <li>
+                  Partnered with internal teams to ship reliable updates,
+                  troubleshoot production issues, and improve the guest digital
+                  journey.
+                </li>
+                <li>
+                  Contributed to ongoing web operations, release work, and
+                  cross-platform consistency for casino and resort properties.
+                </li>
+              </ul>
+            </div>
+          </article>
+        </section>
+
+        <section class="contact" id="contact">
+          <div class="contact-inner">
+            <p class="section-label">Contact</p>
+            <h2>Contact</h2>
+            <p>
+              Open to conversations about engineering roles, collaborations, and
+              interesting problems.
+            </p>
+            <div class="contact-links">
+              <a href="mailto:tprobstcoding@gmail.com">tprobstcoding@gmail.com</a>
+              <a
+                href="https://www.linkedin.com/in/tylerprobst"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                LinkedIn
+              </a>
+              <a
+                href="https://github.com/tylerprobst"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                GitHub
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>&copy; <span id="year"></span> Tyler Probst</p>
+      </footer>
+    </div>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
