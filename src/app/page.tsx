@@ -1,5 +1,5 @@
-import { VillageHero } from "@/components/VillageHero";
+import VillageHero3D from "@/components/VillageHero3D";
 
 export default function Home() {
-  return <VillageHero />;
+  return <VillageHero3D />;
 }
