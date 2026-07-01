@@ -5,6 +5,7 @@ import {
   leftStreetEdge,
   rightStreetEdge,
 } from "./streetGeometry";
+import { C } from "./streetColors";
 
 type ForegroundDetailsProps = {
   style?: CSSProperties;
@@ -12,15 +13,15 @@ type ForegroundDetailsProps = {
 
 function Cobblestones() {
   const rows = [];
-  for (let row = 0; row < 16; row++) {
-    const t = row / 16;
-    const tNext = (row + 1) / 16;
+  for (let row = 0; row < 18; row++) {
+    const t = row / 18;
+    const tNext = (row + 1) / 18;
     const left = leftStreetEdge(t);
     const right = rightStreetEdge(t);
     const leftNext = leftStreetEdge(tNext);
     const rightNext = rightStreetEdge(tNext);
 
-    const stonesInRow = Math.max(3, Math.floor(8 - t * 5));
+    const stonesInRow = Math.max(4, Math.floor(10 - t * 6));
     for (let s = 0; s < stonesInRow; s++) {
       const st = s / stonesInRow;
       const stNext = (s + 1) / stonesInRow;
@@ -35,21 +36,16 @@ function Cobblestones() {
       const y4 = leftNext.y + (rightNext.y - leftNext.y) * st;
 
       const shade = (row + s) % 3;
-      const fill =
-        shade === 0
-          ? "var(--stone-light)"
-          : shade === 1
-            ? "var(--stone-mid)"
-            : "var(--stone-dark)";
+      const fill = shade === 0 ? C.stoneLight : shade === 1 ? C.stoneMid : C.stoneDark;
 
       rows.push(
         <polygon
           key={`${row}-${s}`}
           points={`${x1},${y1} ${x2},${y2} ${x3},${y3} ${x4},${y4}`}
           fill={fill}
-          stroke="#4a4a44"
-          strokeWidth={0.5}
-          opacity={0.85 + t * 0.1}
+          stroke="#7a7268"
+          strokeWidth={0.6}
+          opacity={0.92}
         />,
       );
     }
@@ -59,25 +55,28 @@ function Cobblestones() {
 
 function Rickshaw() {
   return (
-    <g transform="translate(130, 620)">
+    <g transform="translate(145, 640)">
       {/* Puller */}
-      <ellipse cx={-30} cy={-50} rx={10} ry={11} fill="#2a2018" />
-      <path d="M-42,-38 Q-30,-48 -18,-38 L-14,10 Q-30,16 -46,10 Z" fill="#4a7cb8" />
-      <ellipse cx={-30} cy={-58} rx={14} ry={5} fill="#c4a86a" />
-      <path d="M-38,10 L-42,42 M-22,10 L-18,42" stroke="#2a2018" strokeWidth={3} strokeLinecap="round" />
+      <ellipse cx={-32} cy={-52} rx={11} ry={12} fill="#3e2720" />
+      <path d="M-46,-40 Q-32,-52 -18,-40 L-14,12 Q-32,18 -50,12 Z" fill={C.kimonoBlue} />
+      <ellipse cx={-32} cy={-62} rx={15} ry={6} fill="#d4a76a" />
+      <path d="M-40,12 L-44,48 M-24,12 L-20,48" stroke="#3e2720" strokeWidth={3.5} strokeLinecap="round" />
 
-      {/* Rickshaw body */}
-      <ellipse cx={30} cy={30} rx={55} ry={18} fill="#1a1a1a" />
-      <ellipse cx={30} cy={22} rx={48} ry={14} fill="#222" />
-      <path d="M-20,5 Q30,-20 80,5 L75,30 Q30,45 -25,30 Z" fill="#1a1a1a" />
-      <path d="M-10,0 Q30,-14 70,0 L68,18 Q30,28 -12,18 Z" fill="#c62828" />
-      <circle cx={-15} cy={38} r={10} fill="#2a2a2a" stroke="#444" strokeWidth={2} />
-      <circle cx={75} cy={38} r={10} fill="#2a2a2a" stroke="#444" strokeWidth={2} />
+      {/* Rickshaw */}
+      <ellipse cx={35} cy={32} rx={58} ry={20} fill="#2d2d2d" />
+      <path d="M-22,4 Q35,-22 88,4 L84,32 Q35,48 -28,32 Z" fill="#2d2d2d" />
+      <path d="M-12,-2 Q35,-16 78,-2 L76,20 Q35,30 -14,20 Z" fill={C.lanternRed} />
+      <path d="M-8,6 Q35,-4 72,6 L70,16 Q35,22 -10,16 Z" fill={C.awningStripe} opacity={0.6} />
+      <circle cx={-18} cy={42} r={11} fill="#3a3a3a" stroke="#555" strokeWidth={2} />
+      <circle cx={82} cy={42} r={11} fill="#3a3a3a" stroke="#555" strokeWidth={2} />
+      <circle cx={-18} cy={42} r={4} fill="#666" />
+      <circle cx={82} cy={42} r={4} fill="#666" />
 
       {/* Passenger */}
-      <ellipse cx={35} cy={-8} rx={8} ry={9} fill="#2a2018" />
-      <path d="M22,2 Q35,-6 48,2 L44,28 Q35,34 26,28 Z" fill="#f0e8d8" />
-      <ellipse cx={35} cy={-16} rx={12} ry={5} fill="#c4a86a" />
+      <ellipse cx={38} cy={-10} rx={9} ry={10} fill="#3e2720" />
+      <path d="M24,2 Q38,-8 52,2 L48,30 Q38,36 28,30 Z" fill={C.plasterWarm} />
+      <ellipse cx={38} cy={-18} rx={13} ry={5} fill="#d4a76a" />
+      <path d="M20,8 Q38,18 56,8" fill="none" stroke={C.kimonoPink} strokeWidth={3} opacity={0.5} />
     </g>
   );
 }
@@ -92,25 +91,34 @@ export function ForegroundDetails({ style }: ForegroundDetailsProps) {
         aria-hidden
       >
         <defs>
+          <linearGradient id="streetWarmth" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stopColor={C.pathWarm} />
+            <stop offset="60%" stopColor={C.stoneBase} />
+            <stop offset="100%" stopColor={C.stoneLight} />
+          </linearGradient>
           <linearGradient id="streetShadow" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="rgba(0,0,0,0)" />
-            <stop offset="100%" stopColor="rgba(0,0,0,0.15)" />
+            <stop offset="100%" stopColor="rgba(60,40,20,0.1)" />
           </linearGradient>
+          <radialGradient id="sunPatch" cx="50%" cy="30%" r="50%">
+            <stop offset="0%" stopColor="rgba(255,240,200,0.25)" />
+            <stop offset="100%" stopColor="rgba(255,240,200,0)" />
+          </radialGradient>
         </defs>
 
-        {/* Street surface */}
-        <polygon points={STREET_SURFACE} fill="var(--stone-mid)" />
+        <polygon points={STREET_SURFACE} fill="url(#streetWarmth)" />
         <Cobblestones />
+        <polygon points={STREET_SURFACE} fill="url(#sunPatch)" />
         <polygon points={STREET_SURFACE} fill="url(#streetShadow)" />
 
-        {/* Building shadows cast onto street */}
+        {/* Soft building shadows */}
         <polygon
-          points={`0,900 0,700 ${leftStreetEdge(0.15).x},${leftStreetEdge(0.15).y} ${STREET.bottomLeft.x},${STREET.bottomLeft.y}`}
-          fill="rgba(0,0,0,0.12)"
+          points={`0,900 0,680 ${leftStreetEdge(0.12).x},${leftStreetEdge(0.12).y} ${STREET.bottomLeft.x},${STREET.bottomLeft.y}`}
+          fill="rgba(60,40,20,0.08)"
         />
         <polygon
-          points={`1440,900 1440,700 ${rightStreetEdge(0.15).x},${rightStreetEdge(0.15).y} ${STREET.bottomRight.x},${STREET.bottomRight.y}`}
-          fill="rgba(0,0,0,0.12)"
+          points={`1440,900 1440,680 ${rightStreetEdge(0.12).x},${rightStreetEdge(0.12).y} ${STREET.bottomRight.x},${STREET.bottomRight.y}`}
+          fill="rgba(60,40,20,0.08)"
         />
 
         <Rickshaw />

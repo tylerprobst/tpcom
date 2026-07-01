@@ -1,11 +1,11 @@
 import type { CSSProperties } from "react";
 import { VP } from "./streetGeometry";
+import { C } from "./streetColors";
 
 type DistantMountainsProps = {
   style?: CSSProperties;
 };
 
-/** Alley depth — sky corridor, distant rooftops, and greenery at vanishing point. */
 export function DistantMountains({ style }: DistantMountainsProps) {
   return (
     <div className="village-layer" style={style}>
@@ -17,39 +17,56 @@ export function DistantMountains({ style }: DistantMountainsProps) {
       >
         <defs>
           <linearGradient id="skyCorridor" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#8ecae6" />
-            <stop offset="100%" stopColor="#d4e8f5" />
+            <stop offset="0%" stopColor={C.skyTop} />
+            <stop offset="100%" stopColor={C.skyHorizon} />
           </linearGradient>
         </defs>
 
-        {/* Sky visible through the alley */}
         <polygon
-          points={`${VP.x - 60},80 ${VP.x + 60},80 ${VP.x + 42},${VP.y} ${VP.x - 42},${VP.y}`}
+          points={`${VP.x - 80},60 ${VP.x + 80},60 ${VP.x + 50},${VP.y} ${VP.x - 50},${VP.y}`}
           fill="url(#skyCorridor)"
         />
 
-        {/* Distant green hills */}
         <path
-          d={`M${VP.x - 120},${VP.y + 20} Q${VP.x - 40},${VP.y - 30} ${VP.x},${VP.y + 5} Q${VP.x + 40},${VP.y - 30} ${VP.x + 120},${VP.y + 20} L${VP.x + 100},${VP.y + 60} L${VP.x - 100},${VP.y + 60} Z`}
-          fill="var(--foliage-green)"
-          opacity={0.75}
+          d={`M${VP.x - 140},${VP.y + 30} Q${VP.x - 50},${VP.y - 40} ${VP.x},${VP.y} Q${VP.x + 50},${VP.y - 40} ${VP.x + 140},${VP.y + 30} L${VP.x + 120},${VP.y + 80} L${VP.x - 120},${VP.y + 80} Z`}
+          fill={C.foliage}
+          opacity={0.85}
         />
-
-        {/* Far buildings silhouetted at end of street */}
-        <rect x={VP.x - 90} y={VP.y - 10} width={36} height={50} fill="var(--wood-mid)" opacity={0.6} />
-        <rect x={VP.x - 48} y={VP.y - 18} width={30} height={58} fill="var(--wood-dark)" opacity={0.55} />
-        <rect x={VP.x - 10} y={VP.y - 22} width={28} height={62} fill="var(--wood-mid)" opacity={0.5} />
-        <rect x={VP.x + 22} y={VP.y - 15} width={32} height={55} fill="var(--wood-dark)" opacity={0.55} />
-        <rect x={VP.x + 58} y={VP.y - 8} width={34} height={48} fill="var(--wood-mid)" opacity={0.5} />
-
-        {/* Distant roofline */}
         <path
-          d={`M${VP.x - 95},${VP.y - 12} L${VP.x - 72},${VP.y - 28} L${VP.x - 54},${VP.y - 12} L${VP.x - 30},${VP.y - 32} L${VP.x - 8},${VP.y - 14} L${VP.x + 14},${VP.y - 30} L${VP.x + 36},${VP.y - 14} L${VP.x + 60},${VP.y - 26} L${VP.x + 92},${VP.y - 10}`}
+          d={`M${VP.x - 100},${VP.y + 20} Q${VP.x - 30},${VP.y - 20} ${VP.x + 20},${VP.y + 15} Q${VP.x + 60},${VP.y - 10} ${VP.x + 110},${VP.y + 25}`}
           fill="none"
-          stroke="var(--roof-tile)"
-          strokeWidth={4}
+          stroke={C.sakuraPink}
+          strokeWidth={12}
           opacity={0.5}
+          strokeLinecap="round"
         />
+
+        {/* Distant colorful shop row */}
+        {[
+          { x: VP.x - 100, w: 38, h: 55, c: C.woodMid },
+          { x: VP.x - 58, w: 32, h: 62, c: C.plasterWarm },
+          { x: VP.x - 22, w: 30, h: 68, c: C.woodLight },
+          { x: VP.x + 14, w: 34, h: 58, c: C.plaster },
+          { x: VP.x + 52, w: 36, h: 52, c: C.woodMid },
+          { x: VP.x + 92, w: 32, h: 48, c: C.plasterWarm },
+        ].map((b, i) => (
+          <g key={i}>
+            <rect x={b.x} y={VP.y + 70 - b.h} width={b.w} height={b.h} fill={b.c} rx={2} />
+            <path
+              d={`M${b.x - 2},${VP.y + 70 - b.h + 8} L${b.x + b.w / 2},${VP.y + 70 - b.h - 6} L${b.x + b.w + 2},${VP.y + 70 - b.h + 8}`}
+              fill={C.roofTile}
+            />
+            <rect
+              x={b.x + b.w * 0.3}
+              y={VP.y + 70 - b.h * 0.4}
+              width={b.w * 0.35}
+              height={b.h * 0.2}
+              fill={C.windowGlow}
+              opacity={0.6}
+              rx={1}
+            />
+          </g>
+        ))}
       </svg>
     </div>
   );

@@ -1,25 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --sky-top: #7ec8e8;
-  --sky-mid: #a8d8f0;
-  --sky-horizon: #d4e8f5;
-  --cloud-white: #ffffff;
-  --wood-dark: #3d2914;
-  --wood-mid: #5c3d1e;
-  --wood-light: #7a5230;
-  --roof-tile: #3a3a38;
-  --roof-tile-light: #555550;
-  --stone-light: #9a9a92;
-  --stone-mid: #7a7a72;
-  --stone-dark: #5e5e58;
-  --sakura-pink: #f4a0b8;
-  --sakura-deep: #e87898;
-  --sakura-pale: #ffc8d4;
-  --lantern-red: #c62828;
-  --lantern-glow: #ff8a50;
-  --foliage-green: #4a7c59;
-  --sign-cream: #f5f0e6;
+  --sakura-pale: #ffc8d8;
+  --lantern-glow: #ffab40;
 }
 
 @theme inline {
@@ -40,42 +23,29 @@ body {
   margin: 0;
   overflow-x: hidden;
   font-family: var(--font-nunito), system-ui, sans-serif;
-  background: var(--sky-mid);
+  background: #9dd4ef;
 }
 
 @keyframes drift {
-  0% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(24px);
-  }
-  100% {
-    transform: translateX(0);
-  }
+  0% { transform: translateX(0); }
+  50% { transform: translateX(24px); }
+  100% { transform: translateX(0); }
 }
 
 @keyframes drift-reverse {
-  0% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(-20px);
-  }
-  100% {
-    transform: translateX(0);
-  }
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-20px); }
+  100% { transform: translateX(0); }
 }
 
 @keyframes lantern-glow {
-  0%,
-  100% {
-    opacity: 0.8;
-    filter: drop-shadow(0 0 4px var(--lantern-glow));
+  0%, 100% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 6px var(--lantern-glow));
   }
   50% {
     opacity: 1;
-    filter: drop-shadow(0 0 12px var(--lantern-glow));
+    filter: drop-shadow(0 0 16px #ff6d00);
   }
 }
 
@@ -84,9 +54,7 @@ body {
     transform: translateY(-5vh) translateX(0) rotate(0deg);
     opacity: 0;
   }
-  8% {
-    opacity: 0.85;
-  }
+  8% { opacity: 0.9; }
   100% {
     transform: translateY(105vh) translateX(30px) rotate(280deg);
     opacity: 0;
@@ -101,28 +69,18 @@ body {
   will-change: transform;
 }
 
-.cloud-drift {
-  animation: drift 50s ease-in-out infinite;
-}
+.cloud-drift { animation: drift 50s ease-in-out infinite; }
+.cloud-drift-slow { animation: drift-reverse 65s ease-in-out infinite; }
+.cloud-drift-fast { animation: drift 38s ease-in-out infinite; }
 
-.cloud-drift-slow {
-  animation: drift-reverse 65s ease-in-out infinite;
-}
-
-.cloud-drift-fast {
-  animation: drift 38s ease-in-out infinite;
-}
-
-.lantern-pulse {
-  animation: lantern-glow 3.5s ease-in-out infinite;
-}
+.lantern-pulse { animation: lantern-glow 3.5s ease-in-out infinite; }
 
 .petal {
   position: absolute;
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50% 0 50% 50%;
-  background: var(--sakura-pale);
+  background: #ffb7c5;
   opacity: 0;
   animation: petal-fall linear infinite;
   pointer-events: none;

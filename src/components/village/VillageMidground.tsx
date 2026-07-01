@@ -6,6 +6,7 @@ import {
   leftStreetEdge,
   rightStreetEdge,
 } from "./streetGeometry";
+import { C } from "./streetColors";
 
 type VillageMidgroundProps = {
   style?: CSSProperties;
@@ -15,29 +16,28 @@ function SignBoard({
   x,
   y,
   height,
-  width = 22,
+  width = 24,
+  variant = "cream",
 }: {
   x: number;
   y: number;
   height: number;
   width?: number;
+  variant?: "cream" | "green";
 }) {
+  const bg = variant === "green" ? C.signGreen : C.signCream;
+  const stroke = variant === "green" ? C.signGreenDark : "#d4cfc4";
+  const ink = variant === "green" ? "#fff" : "#2a2a2a";
+
   return (
     <g>
-      <rect
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-        rx={2}
-        fill="var(--sign-cream)"
-        stroke="#d4cfc4"
-        strokeWidth={1}
-      />
-      <line x1={x + 5} y1={y + 10} x2={x + width - 5} y2={y + 10} stroke="#2a2a2a" strokeWidth={2} />
-      <line x1={x + 5} y1={y + 22} x2={x + width - 5} y2={y + 22} stroke="#2a2a2a" strokeWidth={1.5} />
-      <line x1={x + 5} y1={y + 34} x2={x + width - 5} y2={y + 34} stroke="#2a2a2a" strokeWidth={1.5} />
-      <line x1={x + 8} y1={y + 46} x2={x + width - 8} y2={y + 46} stroke="#2a2a2a" strokeWidth={1} />
+      <rect x={x} y={y} width={width} height={height} rx={2} fill={bg} stroke={stroke} strokeWidth={1.5} />
+      <line x1={x + 4} y1={y + 12} x2={x + width - 4} y2={y + 12} stroke={ink} strokeWidth={variant === "green" ? 1.5 : 2} />
+      <line x1={x + 4} y1={y + 24} x2={x + width - 4} y2={y + 24} stroke={ink} strokeWidth={1.5} />
+      <line x1={x + 4} y1={y + 36} x2={x + width - 4} y2={y + 36} stroke={ink} strokeWidth={1} />
+      {variant === "cream" && (
+        <line x1={x + 6} y1={y + 48} x2={x + width - 6} y2={y + 48} stroke={ink} strokeWidth={1} />
+      )}
     </g>
   );
 }
@@ -45,69 +45,136 @@ function SignBoard({
 function Lantern({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
   return (
     <g className="lantern-pulse" transform={`translate(${x}, ${y}) scale(${scale})`}>
-      <line x1={0} y1={-8} x2={0} y2={0} stroke="#4a3020" strokeWidth={1.5} />
-      <ellipse cx={0} cy={10} rx={9} ry={12} fill="var(--lantern-red)" />
-      <ellipse cx={0} cy={10} rx={5} ry={7} fill="#ff6b4a" opacity={0.5} />
-      <rect x={-3} y={20} width={6} height={4} rx={1} fill="#8b2020" />
+      <line x1={0} y1={-10} x2={0} y2={0} stroke={C.woodTrim} strokeWidth={2} />
+      <rect x={-11} y={-2} width={22} height={6} rx={2} fill={C.woodTrim} />
+      <ellipse cx={0} cy={14} rx={11} ry={14} fill={C.lanternRed} />
+      <ellipse cx={0} cy={14} rx={6} ry={8} fill={C.lanternGlow} opacity={0.55} />
+      <line x1={-4} y1={8} x2={4} y2={8} stroke="#fff" strokeWidth={1} opacity={0.4} />
+      <rect x={-4} y={26} width={8} height={5} rx={1} fill="#b71c1c" />
     </g>
   );
 }
 
 function SakuraCluster({ cx, cy, r }: { cx: number; cy: number; r: number }) {
   return (
-    <g opacity={0.9}>
-      <circle cx={cx} cy={cy} r={r} fill="var(--sakura-pink)" />
-      <circle cx={cx - r * 0.6} cy={cy + r * 0.3} r={r * 0.7} fill="var(--sakura-deep)" opacity={0.8} />
-      <circle cx={cx + r * 0.55} cy={cy + r * 0.2} r={r * 0.65} fill="var(--sakura-pale)" />
-      <circle cx={cx} cy={cy - r * 0.4} r={r * 0.5} fill="var(--sakura-pale)" opacity={0.85} />
+    <g>
+      <circle cx={cx} cy={cy} r={r} fill={C.sakuraPink} opacity={0.92} />
+      <circle cx={cx - r * 0.55} cy={cy + r * 0.25} r={r * 0.72} fill={C.sakuraDeep} opacity={0.8} />
+      <circle cx={cx + r * 0.5} cy={cy + r * 0.15} r={r * 0.68} fill={C.sakuraPale} />
+      <circle cx={cx} cy={cy - r * 0.35} r={r * 0.55} fill={C.sakuraHot} opacity={0.75} />
+      <circle cx={cx + r * 0.3} cy={cy + r * 0.4} r={r * 0.35} fill={C.sakuraPale} opacity={0.7} />
     </g>
   );
 }
 
-function Walker({ x, y, scale, kimono }: { x: number; y: number; scale: number; kimono: string }) {
+function Walker({ x, y, scale, kimono, obi }: { x: number; y: number; scale: number; kimono: string; obi?: string }) {
   return (
-    <g transform={`translate(${x}, ${y}) scale(${scale})`} opacity={0.9}>
-      <ellipse cx={0} cy={-28} rx={7} ry={8} fill="#2a2018" />
-      <path d="M-12,0 Q0,-8 12,0 L10,32 Q0,38 -10,32 Z" fill={kimono} />
-      <path d="M-10,32 L-14,52 M10,32 L14,52" stroke="#2a2018" strokeWidth={3} strokeLinecap="round" />
-      <path d="M-6,0 Q0,6 6,0" fill="none" stroke={kimono} strokeWidth={1} opacity={0.5} />
+    <g transform={`translate(${x}, ${y}) scale(${scale})`}>
+      <ellipse cx={0} cy={-30} rx={8} ry={9} fill="#3e2720" />
+      <path d="M-14,2 Q0,-10 14,2 L12,36 Q0,44 -12,36 Z" fill={kimono} />
+      {obi && <rect x={-10} y={14} width={20} height={6} rx={2} fill={obi} />}
+      <path d="M-11,36 L-15,58 M11,36 L15,58" stroke="#3e2720" strokeWidth={3.5} strokeLinecap="round" />
+    </g>
+  );
+}
+
+function ShopBay({
+  t,
+  side,
+  plaster = false,
+}: {
+  t: number;
+  side: "left" | "right";
+  plaster?: boolean;
+}) {
+  const depth = 0.07;
+  const tFar = Math.max(0, t - depth);
+  const near = side === "left" ? leftStreetEdge(t) : rightStreetEdge(t);
+  const far = side === "left" ? leftStreetEdge(tFar) : rightStreetEdge(tFar);
+  const wallX = side === "left" ? 0 : 1440;
+  const protrusion = side === "left" ? 60 * (1 - t) + 20 : -(60 * (1 - t) + 20);
+
+  const x1 = side === "left" ? wallX + protrusion * 0.3 : wallX + protrusion * 0.3;
+  const x2 = near.x;
+  const x3 = far.x;
+  const x4 = side === "left" ? wallX + protrusion * 0.1 : wallX + protrusion * 0.1;
+
+  const wallFill = plaster ? C.plasterWarm : C.woodMid;
+  const trim = C.woodTrim;
+
+  const points =
+    side === "left"
+      ? `${x1},${near.y} ${x2},${near.y} ${x3},${far.y} ${x4},${far.y}`
+      : `${x2},${near.y} ${x1},${near.y} ${x4},${far.y} ${x3},${far.y}`;
+
+  const signX = side === "left" ? near.x - 28 : near.x + 4;
+  const lanternX = side === "left" ? near.x - 10 : near.x + 10;
+  const scale = 0.5 + (1 - t) * 0.8;
+
+  return (
+    <g>
+      <polygon points={points} fill={wallFill} stroke={trim} strokeWidth={1} opacity={0.95} />
+      {/* Roof cap */}
+      <polygon
+        points={
+          side === "left"
+            ? `${x1 - 5},${near.y} ${x2 + 8},${near.y} ${x3 + 4},${far.y} ${x4 - 3},${far.y}`
+            : `${x2 - 8},${near.y} ${x1 + 5},${near.y} ${x4 + 3},${far.y} ${x3 - 4},${far.y}`
+        }
+        fill={C.roofAccent}
+        opacity={0.9}
+      />
+      {/* Awning */}
+      <polygon
+        points={
+          side === "left"
+            ? `${x2 - 5},${near.y + 5} ${x2 + 35 * scale},${near.y + 18} ${x3 + 20 * scale},${far.y + 5} ${x3 - 5},${far.y}`
+            : `${x2 + 5},${near.y + 5} ${x2 - 35 * scale},${near.y + 18} ${x3 - 20 * scale},${far.y + 5} ${x3 + 5},${far.y}`
+        }
+        fill={C.awningRed}
+        opacity={0.85}
+      />
+      {/* Window glow */}
+      <rect
+        x={side === "left" ? near.x - 40 * scale : near.x + 8}
+        y={near.y - 45 * scale}
+        width={22 * scale}
+        height={28 * scale}
+        fill={C.woodTrim}
+        rx={2}
+        opacity={0.7}
+      />
+      <rect
+        x={side === "left" ? near.x - 36 * scale : near.x + 12}
+        y={near.y - 40 * scale}
+        width={14 * scale}
+        height={18 * scale}
+        fill={C.windowGlow}
+        rx={1}
+        opacity={0.75}
+      />
+      <SignBoard x={signX} y={near.y - 75 * scale} height={55 * scale} width={20 * scale} variant={t < 0.3 ? "green" : "cream"} />
+      <Lantern x={lanternX} y={near.y - 15 * scale} scale={scale} />
     </g>
   );
 }
 
 function BuildingBeams({ side }: { side: "left" | "right" }) {
   const lines = [];
-  for (let i = 0; i < 14; i++) {
-    const t = i / 14;
+  for (let i = 0; i < 16; i++) {
+    const t = i / 16;
     const left = leftStreetEdge(t);
     const right = rightStreetEdge(t);
     const y = left.y;
+    const color = i % 3 === 0 ? C.woodTrim : C.woodDark;
 
     if (side === "left") {
       lines.push(
-        <line
-          key={i}
-          x1={0}
-          y1={y}
-          x2={left.x}
-          y2={y}
-          stroke="var(--wood-dark)"
-          strokeWidth={1.5}
-          opacity={0.35 + t * 0.2}
-        />,
+        <line key={i} x1={0} y1={y} x2={left.x} y2={y} stroke={color} strokeWidth={i % 3 === 0 ? 2.5 : 1} opacity={0.25 + t * 0.35} />,
       );
     } else {
       lines.push(
-        <line
-          key={i}
-          x1={right.x}
-          y1={y}
-          x2={1440}
-          y2={y}
-          stroke="var(--wood-dark)"
-          strokeWidth={1.5}
-          opacity={0.35 + t * 0.2}
-        />,
+        <line key={i} x1={right.x} y1={y} x2={1440} y2={y} stroke={color} strokeWidth={i % 3 === 0 ? 2.5 : 1} opacity={0.25 + t * 0.35} />,
       );
     }
   }
@@ -124,15 +191,15 @@ export function VillageMidground({ style }: VillageMidgroundProps) {
         aria-hidden
       >
         <defs>
-          <linearGradient id="woodLeft" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="var(--wood-dark)" />
-            <stop offset="70%" stopColor="var(--wood-mid)" />
-            <stop offset="100%" stopColor="var(--wood-light)" />
+          <linearGradient id="woodLeft" x1="0" y1="0" x2="1" y2="0.3">
+            <stop offset="0%" stopColor={C.woodDark} />
+            <stop offset="50%" stopColor={C.woodMid} />
+            <stop offset="100%" stopColor={C.woodLight} />
           </linearGradient>
-          <linearGradient id="woodRight" x1="1" y1="0" x2="0" y2="0">
-            <stop offset="0%" stopColor="var(--wood-dark)" />
-            <stop offset="70%" stopColor="var(--wood-mid)" />
-            <stop offset="100%" stopColor="var(--wood-light)" />
+          <linearGradient id="woodRight" x1="1" y1="0" x2="0" y2="0.3">
+            <stop offset="0%" stopColor={C.woodDark} />
+            <stop offset="50%" stopColor={C.woodMid} />
+            <stop offset="100%" stopColor={C.woodLight} />
           </linearGradient>
           <clipPath id="clipLeft">
             <polygon points={LEFT_FACADE} />
@@ -142,103 +209,79 @@ export function VillageMidground({ style }: VillageMidgroundProps) {
           </clipPath>
         </defs>
 
-        {/* Cherry blossom canopy framing the alley */}
-        <g opacity={0.95}>
-          <SakuraCluster cx={120} cy={60} r={90} />
-          <SakuraCluster cx={280} cy={30} r={70} />
-          <SakuraCluster cx={60} cy={180} r={55} />
-          <SakuraCluster cx={200} cy={140} r={65} />
-          <SakuraCluster cx={1320} cy={55} r={85} />
-          <SakuraCluster cx={1160} cy={25} r={75} />
-          <SakuraCluster cx={1380} cy={170} r={60} />
-          <SakuraCluster cx={1240} cy={130} r={68} />
-          <SakuraCluster cx={400} cy={10} r={50} />
-          <SakuraCluster cx={1040} cy={8} r={48} />
-          {/* Arching branches */}
-          <path
-            d="M0,200 Q200,80 500,120 Q650,140 720,100"
-            fill="none"
-            stroke="#5c3d2e"
-            strokeWidth={8}
-            opacity={0.5}
-          />
-          <path
-            d="M1440,190 Q1240,70 940,110 Q790,130 720,95"
-            fill="none"
-            stroke="#5c3d2e"
-            strokeWidth={8}
-            opacity={0.5}
-          />
+        {/* Cherry blossom canopy */}
+        <g>
+          <SakuraCluster cx={100} cy={50} r={100} />
+          <SakuraCluster cx={300} cy={20} r={80} />
+          <SakuraCluster cx={50} cy={170} r={65} />
+          <SakuraCluster cx={220} cy={120} r={75} />
+          <SakuraCluster cx={1340} cy={45} r={95} />
+          <SakuraCluster cx={1140} cy={18} r={82} />
+          <SakuraCluster cx={1390} cy={160} r={68} />
+          <SakuraCluster cx={1220} cy={115} r={72} />
+          <SakuraCluster cx={500} cy={5} r={55} />
+          <SakuraCluster cx={940} cy={3} r={52} />
+          <SakuraCluster cx={720} cy={40} r={45} />
+          <path d="M0,220 Q250,60 520,110 Q680,150 720,90" fill="none" stroke={C.woodDark} strokeWidth={10} opacity={0.35} strokeLinecap="round" />
+          <path d="M1440,210 Q1190,55 920,105 Q760,145 720,85" fill="none" stroke={C.woodDark} strokeWidth={10} opacity={0.35} strokeLinecap="round" />
         </g>
 
-        {/* Left building row */}
+        {/* Base building walls */}
         <polygon points={LEFT_FACADE} fill="url(#woodLeft)" />
+        <polygon points={RIGHT_FACADE} fill="url(#woodRight)" />
+
         <g clipPath="url(#clipLeft)">
           <BuildingBeams side="left" />
-          {/* Roof overhang left */}
-          <path
-            d="M0,280 L0,310 L420,870 L400,850 Z"
-            fill="var(--roof-tile)"
-            opacity={0.85}
-          />
-          <path
-            d="M0,300 L180,420 L160,400 L0,290 Z"
-            fill="var(--roof-tile-light)"
-            opacity={0.4}
-          />
-          {/* Windows & doors at increasing depth */}
-          <rect x={40} y={620} width={80} height={100} rx={3} fill="#2a1a0c" opacity={0.5} />
-          <rect x={50} y={635} width={25} height={35} fill="#ffe8a0" opacity={0.35} />
-          <rect x={85} y={635} width={25} height={35} fill="#ffe8a0" opacity={0.25} />
-          <rect x={120} y={500} width={55} height={70} rx={2} fill="#2a1a0c" opacity={0.45} />
-          <rect x={128} y={512} width={18} height={25} fill="#ffe8a0" opacity={0.3} />
-          <rect x={200} y={400} width={40} height={55} rx={2} fill="#2a1a0c" opacity={0.4} />
-          <rect x={250} y={330} width={30} height={40} rx={2} fill="#2a1a0c" opacity={0.35} />
-
-          <SignBoard x={70} y={480} height={90} />
-          <SignBoard x={160} y={370} height={75} width={18} />
-          <SignBoard x={280} y={290} height={55} width={14} />
-
-          <Lantern x={130} y={460} scale={1.2} />
-          <Lantern x={220} y={360} scale={0.9} />
-          <Lantern x={310} y={280} scale={0.65} />
+          <path d="M0,260 L0,295 L430,880 L405,860 Z" fill={C.roofTile} opacity={0.9} />
+          <path d="M0,285 L200,410 L175,395 L0,275 Z" fill={C.roofTileHi} opacity={0.35} />
         </g>
 
-        {/* Right building row */}
-        <polygon points={RIGHT_FACADE} fill="url(#woodRight)" />
         <g clipPath="url(#clipRight)">
           <BuildingBeams side="right" />
-          <path
-            d="M1440,275 L1440,305 L1040,865 L1060,845 Z"
-            fill="var(--roof-tile)"
-            opacity={0.85}
-          />
-          <rect x={1280} y={610} width={85} height={105} rx={3} fill="#2a1a0c" opacity={0.5} />
-          <rect x={1290} y={625} width={26} height={36} fill="#ffe8a0" opacity={0.35} />
-          <rect x={1325} y={625} width={26} height={36} fill="#ffe8a0" opacity={0.25} />
-          <rect x={1180} y={490} width={58} height={72} rx={2} fill="#2a1a0c" opacity={0.45} />
-          <rect x={1100} y={390} width={42} height={58} rx={2} fill="#2a1a0c" opacity={0.4} />
-          <rect x={1020} y={320} width={32} height={42} rx={2} fill="#2a1a0c" opacity={0.35} />
-
-          <SignBoard x={1340} y={475} height={88} />
-          <SignBoard x={1220} y={365} height={72} width={18} />
-          <SignBoard x={1120} y={285} height={52} width={14} />
-
-          <Lantern x={1310} y={455} scale={1.2} />
-          <Lantern x={1210} y={355} scale={0.9} />
-          <Lantern x={1100} y={275} scale={0.65} />
+          <path d="M1440,255 L1440,290 L1050,875 L1075,855 Z" fill={C.roofTile} opacity={0.9} />
         </g>
 
-        {/* Mid-street lanterns receding */}
-        <Lantern x={leftStreetEdge(0.35).x + 15} y={leftStreetEdge(0.35).y - 30} scale={0.5} />
-        <Lantern x={rightStreetEdge(0.35).x - 15} y={rightStreetEdge(0.35).y - 30} scale={0.5} />
-        <Lantern x={leftStreetEdge(0.55).x + 8} y={leftStreetEdge(0.55).y - 20} scale={0.35} />
-        <Lantern x={rightStreetEdge(0.55).x - 8} y={rightStreetEdge(0.55).y - 20} scale={0.35} />
+        {/* Protruding shop bays with color */}
+        <ShopBay t={0.12} side="left" plaster />
+        <ShopBay t={0.28} side="left" />
+        <ShopBay t={0.48} side="left" plaster />
+        <ShopBay t={0.68} side="left" />
+        <ShopBay t={0.12} side="right" />
+        <ShopBay t={0.28} side="right" plaster />
+        <ShopBay t={0.48} side="right" />
+        <ShopBay t={0.68} side="right" plaster />
 
-        {/* Figures walking away down the street */}
-        <Walker x={700} y={560} scale={0.85} kimono="#d4789a" />
-        <Walker x={735} y={555} scale={0.85} kimono="#8b6bae" />
-        <Walker x={VP.x - 8} y={VP.y + 80} scale={0.35} kimono="#f0f0e8" />
+        {/* Hanging lanterns down center */}
+        {[0.2, 0.38, 0.55, 0.72].map((t) => (
+          <g key={t}>
+            <Lantern x={leftStreetEdge(t).x + 12} y={leftStreetEdge(t).y - 25} scale={0.35 + (1 - t) * 0.4} />
+            <Lantern x={rightStreetEdge(t).x - 12} y={rightStreetEdge(t).y - 25} scale={0.35 + (1 - t) * 0.4} />
+          </g>
+        ))}
+
+        {/* Potted plants & details near foreground */}
+        <g transform="translate(350, 780)">
+          <rect x={0} y={15} width={28} height={22} rx={3} fill={C.woodMid} />
+          <circle cx={14} cy={8} r={14} fill={C.foliage} />
+          <circle cx={8} cy={4} r={8} fill={C.sakuraPink} opacity={0.7} />
+        </g>
+        <g transform="translate(1050, 790)">
+          <rect x={0} y={12} width={24} height={20} rx={3} fill={C.woodMid} />
+          <ellipse cx={12} cy={5} rx={12} ry={10} fill={C.foliageDark} />
+        </g>
+
+        {/* Stone lantern (tōrō) */}
+        <g transform={`translate(${rightStreetEdge(0.15).x - 30}, ${rightStreetEdge(0.15).y - 10})`} opacity={0.85}>
+          <rect x={8} y={30} width={14} height={25} fill="#78909c" rx={2} />
+          <path d="M0,30 L30,30 L25,20 L5,20 Z" fill="#90a4ae" />
+          <rect x={5} y={10} width={20} height={12} fill="#b0bec5" rx={2} />
+          <rect x={10} y={0} width={10} height={12} fill="#cfd8dc" rx={1} />
+        </g>
+
+        {/* Walkers */}
+        <Walker x={690} y={570} scale={0.9} kimono={C.kimonoPink} obi="#fff" />
+        <Walker x={728} y={565} scale={0.9} kimono={C.kimonoPurple} obi="#f8e8f0" />
+        <Walker x={VP.x - 5} y={VP.y + 95} scale={0.38} kimono={C.kimonoBlue} />
       </svg>
     </div>
   );
