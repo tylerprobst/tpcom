@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+:root {
+  --sakura-pale: #ffc8d8;
+  --lantern-glow: #ffab40;
+}
+
+@theme inline {
+  --font-sans: var(--font-nunito);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  font-family: var(--font-nunito), system-ui, sans-serif;
+  background: #9dd4ef;
+}
+
+@keyframes drift {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(24px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes drift-reverse {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-20px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes lantern-glow {
+  0%, 100% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 6px var(--lantern-glow));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 16px #ff6d00);
+  }
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translateY(-5vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  8% { opacity: 0.9; }
+  100% {
+    transform: translateY(105vh) translateX(30px) rotate(280deg);
+    opacity: 0;
+  }
+}
+
+.village-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.cloud-drift { animation: drift 50s ease-in-out infinite; }
+.cloud-drift-slow { animation: drift-reverse 65s ease-in-out infinite; }
+.cloud-drift-fast { animation: drift 38s ease-in-out infinite; }
+
+.lantern-pulse { animation: lantern-glow 3.5s ease-in-out infinite; }
+
+.petal {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50% 0 50% 50%;
+  background: #ffb7c5;
+  opacity: 0;
+  animation: petal-fall linear infinite;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.petal-1 { left: 12%; animation-duration: 11s; animation-delay: 0s; }
+.petal-2 { left: 28%; animation-duration: 13s; animation-delay: 2s; }
+.petal-3 { left: 48%; animation-duration: 10s; animation-delay: 4s; }
+.petal-4 { left: 65%; animation-duration: 12s; animation-delay: 1s; }
+.petal-5 { left: 82%; animation-duration: 14s; animation-delay: 5s; }
+.petal-6 { left: 38%; animation-duration: 9s; animation-delay: 7s; }

@@ -1,5 +1,7 @@
-import VillageHero3D from "@/components/VillageHero3D";
-
 export default function Home() {
-  return <VillageHero3D />;
+  return (
+    <main className="flex min-h-screen items-center justify-center">
+      <p className="text-neutral-500">New idea goes here.</p>
+    </main>
+  );
 }
