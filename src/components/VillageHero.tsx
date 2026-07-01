@@ -2,37 +2,39 @@
 
 import { useParallax } from "@/hooks/useParallax";
 import { AtmosphereLayer } from "@/components/village/AtmosphereLayer";
-import { CloudLayer } from "@/components/village/CloudLayer";
-import { DistantMountains } from "@/components/village/DistantMountains";
-import { ForegroundDetails } from "@/components/village/ForegroundDetails";
 import { HeroOverlay } from "@/components/village/HeroOverlay";
-import { SkyGradient } from "@/components/village/SkyGradient";
-import { VillageMidground } from "@/components/village/VillageMidground";
-
-const LAYER_DEPTHS = {
-  sky: 0.015,
-  depth: 0.03,
-  clouds: 0.045,
-  village: 0.07,
-  foreground: 0.1,
-  atmosphere: 0.02,
-} as const;
+import { ImageParallaxLayer } from "@/components/village/ImageParallaxLayer";
+import { VILLAGE_LAYERS } from "@/components/village/villageLayers";
 
 export function VillageHero() {
   const { handleMouseMove, layerStyle } = useParallax();
 
   return (
     <section
-      className="relative h-screen w-full overflow-hidden"
+      className="relative h-screen w-full overflow-hidden bg-[#9dd4ef]"
       onMouseMove={handleMouseMove}
       aria-label="Hero"
     >
-      <SkyGradient style={layerStyle(LAYER_DEPTHS.sky)} />
-      <DistantMountains style={layerStyle(LAYER_DEPTHS.depth)} />
-      <CloudLayer style={layerStyle(LAYER_DEPTHS.clouds)} />
-      <VillageMidground style={layerStyle(LAYER_DEPTHS.village)} />
-      <ForegroundDetails style={layerStyle(LAYER_DEPTHS.foreground)} />
-      <AtmosphereLayer style={layerStyle(LAYER_DEPTHS.atmosphere)} />
+      {VILLAGE_LAYERS.map((layer) => (
+        <ImageParallaxLayer
+          key={layer.src}
+          layer={layer}
+          style={layerStyle(layer.depth)}
+        />
+      ))}
+
+      <AtmosphereLayer style={layerStyle(0.015)} />
+
+      {/* Falling cherry petals */}
+      <div className="pointer-events-none absolute inset-0 z-[4]">
+        <div className="petal petal-1" />
+        <div className="petal petal-2" />
+        <div className="petal petal-3" />
+        <div className="petal petal-4" />
+        <div className="petal petal-5" />
+        <div className="petal petal-6" />
+      </div>
+
       <HeroOverlay />
     </section>
   );
