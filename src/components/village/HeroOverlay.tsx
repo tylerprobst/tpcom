@@ -1,27 +1,28 @@
 export function HeroOverlay() {
   return (
-    <div className="pointer-events-none absolute inset-0 z-10 flex items-end justify-center pb-[12vh] md:pb-[14vh]">
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center pt-[6vh]">
       <div
-        className="mx-4 max-w-lg rounded-2xl px-8 py-6 text-center backdrop-blur-sm"
+        className="mx-4 max-w-xl rounded-xl px-7 py-5 text-center"
         style={{
-          background: "rgba(30, 40, 55, 0.35)",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+          background: "rgba(20, 28, 38, 0.45)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          backdropFilter: "blur(8px)",
+          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.25)",
         }}
       >
         <p
-          className="mb-2 text-sm font-semibold uppercase tracking-[0.2em]"
-          style={{ color: "var(--sky-peach)" }}
+          className="mb-1.5 text-xs font-semibold uppercase tracking-[0.25em]"
+          style={{ color: "var(--sakura-pale)" }}
         >
           Software Engineer
         </p>
         <h1
-          className="mb-3 text-4xl font-bold tracking-tight text-white md:text-5xl"
-          style={{ textShadow: "0 2px 20px rgba(0,0,0,0.3)" }}
+          className="mb-2 text-3xl font-bold tracking-tight text-white md:text-4xl"
+          style={{ textShadow: "0 2px 16px rgba(0,0,0,0.4)" }}
         >
           Tyler Probst
         </h1>
-        <p className="text-base font-medium text-white/85 md:text-lg">
+        <p className="text-sm font-medium text-white/80 md:text-base">
           Building clear, reliable web experiences
         </p>
       </div>

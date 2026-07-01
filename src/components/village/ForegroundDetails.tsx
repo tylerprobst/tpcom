@@ -1,50 +1,119 @@
 import type { CSSProperties } from "react";
+import {
+  STREET,
+  STREET_SURFACE,
+  leftStreetEdge,
+  rightStreetEdge,
+} from "./streetGeometry";
 
 type ForegroundDetailsProps = {
   style?: CSSProperties;
 };
 
+function Cobblestones() {
+  const rows = [];
+  for (let row = 0; row < 16; row++) {
+    const t = row / 16;
+    const tNext = (row + 1) / 16;
+    const left = leftStreetEdge(t);
+    const right = rightStreetEdge(t);
+    const leftNext = leftStreetEdge(tNext);
+    const rightNext = rightStreetEdge(tNext);
+
+    const stonesInRow = Math.max(3, Math.floor(8 - t * 5));
+    for (let s = 0; s < stonesInRow; s++) {
+      const st = s / stonesInRow;
+      const stNext = (s + 1) / stonesInRow;
+
+      const x1 = left.x + (right.x - left.x) * st;
+      const y1 = left.y + (right.y - left.y) * st;
+      const x2 = left.x + (right.x - left.x) * stNext;
+      const y2 = left.y + (right.y - left.y) * stNext;
+      const x3 = leftNext.x + (rightNext.x - leftNext.x) * stNext;
+      const y3 = leftNext.y + (rightNext.y - leftNext.y) * stNext;
+      const x4 = leftNext.x + (rightNext.x - leftNext.x) * st;
+      const y4 = leftNext.y + (rightNext.y - leftNext.y) * st;
+
+      const shade = (row + s) % 3;
+      const fill =
+        shade === 0
+          ? "var(--stone-light)"
+          : shade === 1
+            ? "var(--stone-mid)"
+            : "var(--stone-dark)";
+
+      rows.push(
+        <polygon
+          key={`${row}-${s}`}
+          points={`${x1},${y1} ${x2},${y2} ${x3},${y3} ${x4},${y4}`}
+          fill={fill}
+          stroke="#4a4a44"
+          strokeWidth={0.5}
+          opacity={0.85 + t * 0.1}
+        />,
+      );
+    }
+  }
+  return <g>{rows}</g>;
+}
+
+function Rickshaw() {
+  return (
+    <g transform="translate(130, 620)">
+      {/* Puller */}
+      <ellipse cx={-30} cy={-50} rx={10} ry={11} fill="#2a2018" />
+      <path d="M-42,-38 Q-30,-48 -18,-38 L-14,10 Q-30,16 -46,10 Z" fill="#4a7cb8" />
+      <ellipse cx={-30} cy={-58} rx={14} ry={5} fill="#c4a86a" />
+      <path d="M-38,10 L-42,42 M-22,10 L-18,42" stroke="#2a2018" strokeWidth={3} strokeLinecap="round" />
+
+      {/* Rickshaw body */}
+      <ellipse cx={30} cy={30} rx={55} ry={18} fill="#1a1a1a" />
+      <ellipse cx={30} cy={22} rx={48} ry={14} fill="#222" />
+      <path d="M-20,5 Q30,-20 80,5 L75,30 Q30,45 -25,30 Z" fill="#1a1a1a" />
+      <path d="M-10,0 Q30,-14 70,0 L68,18 Q30,28 -12,18 Z" fill="#c62828" />
+      <circle cx={-15} cy={38} r={10} fill="#2a2a2a" stroke="#444" strokeWidth={2} />
+      <circle cx={75} cy={38} r={10} fill="#2a2a2a" stroke="#444" strokeWidth={2} />
+
+      {/* Passenger */}
+      <ellipse cx={35} cy={-8} rx={8} ry={9} fill="#2a2018" />
+      <path d="M22,2 Q35,-6 48,2 L44,28 Q35,34 26,28 Z" fill="#f0e8d8" />
+      <ellipse cx={35} cy={-16} rx={12} ry={5} fill="#c4a86a" />
+    </g>
+  );
+}
+
 export function ForegroundDetails({ style }: ForegroundDetailsProps) {
   return (
     <div className="village-layer pointer-events-none" style={style}>
       <svg
-        viewBox="0 0 1440 300"
-        preserveAspectRatio="none"
-        className="absolute bottom-0 h-[38%] w-full"
+        viewBox="0 0 1440 900"
+        preserveAspectRatio="xMidYMid slice"
+        className="absolute inset-0 h-full w-full"
         aria-hidden
       >
-        <path
-          d="M0,180 C200,120 400,200 600,150 C800,100 1000,180 1200,130 C1320,100 1380,140 1440,120 L1440,300 L0,300 Z"
-          fill="var(--grass-dark)"
+        <defs>
+          <linearGradient id="streetShadow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="rgba(0,0,0,0)" />
+            <stop offset="100%" stopColor="rgba(0,0,0,0.15)" />
+          </linearGradient>
+        </defs>
+
+        {/* Street surface */}
+        <polygon points={STREET_SURFACE} fill="var(--stone-mid)" />
+        <Cobblestones />
+        <polygon points={STREET_SURFACE} fill="url(#streetShadow)" />
+
+        {/* Building shadows cast onto street */}
+        <polygon
+          points={`0,900 0,700 ${leftStreetEdge(0.15).x},${leftStreetEdge(0.15).y} ${STREET.bottomLeft.x},${STREET.bottomLeft.y}`}
+          fill="rgba(0,0,0,0.12)"
         />
-        <path
-          d="M0,210 C250,160 450,230 700,175 C950,120 1150,200 1440,160 L1440,300 L0,300 Z"
-          fill="var(--grass-light)"
-          opacity={0.85}
+        <polygon
+          points={`1440,900 1440,700 ${rightStreetEdge(0.15).x},${rightStreetEdge(0.15).y} ${STREET.bottomRight.x},${STREET.bottomRight.y}`}
+          fill="rgba(0,0,0,0.12)"
         />
 
-        <path
-          d="M480,210 C600,195 700,205 820,195 C900,188 960,200 1020,195 L1020,300 L480,300 Z"
-          fill="var(--path-sand)"
-        />
-        <path
-          d="M540,210 C660,200 760,208 880,200"
-          fill="none"
-          stroke="#d4a574"
-          strokeWidth={3}
-          opacity={0.5}
-        />
-
-        <g fill="#8B5E3C">
-          <rect x={120} y={195} width={8} height={50} rx={2} />
-          <rect x={118} y={190} width={12} height={8} rx={2} />
-          <rect x={1280} y={200} width={8} height={45} rx={2} />
-          <rect x={1278} y={195} width={12} height={8} rx={2} />
-        </g>
-
-        <circle cx={200} cy={230} r={18} fill="#f9a8c4" opacity={0.7} />
-        <circle cx={220} cy={245} r={14} fill="#fda4b8" opacity={0.6} />
-        <circle cx={1250} cy={235} r={16} fill="#fb7185" opacity={0.65} />
+        <Rickshaw />
       </svg>
 
       <div className="petal petal-1" />
