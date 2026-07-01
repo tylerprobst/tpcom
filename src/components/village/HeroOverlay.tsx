@@ -1,6 +1,13 @@
-export function HeroOverlay() {
+type HeroOverlayProps = {
+  opacity?: number;
+};
+
+export function HeroOverlay({ opacity = 1 }: HeroOverlayProps) {
   return (
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center pt-[5vh]">
+    <div
+      className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center pt-[5vh] transition-opacity duration-300"
+      style={{ opacity }}
+    >
       <div
         className="mx-4 max-w-xl rounded-2xl px-8 py-5 text-center"
         style={{
