@@ -3,8 +3,6 @@ export type SceneLayer = {
   z: number;
   /** How much this layer shifts with mouse movement */
   parallax: number;
-  /** Vertical drift when scrolling (simulates depth while walking) */
-  scrollDrift?: number;
   opacity?: number;
   /** Slightly enlarge layer to avoid edge gaps during parallax */
   coverScale?: number;
@@ -12,31 +10,17 @@ export type SceneLayer = {
 
 export const CAMERA_Z = 5;
 
-/** Total scrollable height as multiples of viewport height */
-export const SCROLL_HEIGHT_VH = 320;
-
-export const SCROLL_CAMERA = {
-  startZ: 5,
-  endZ: 2.4,
-  startY: 0,
-  endY: -0.18,
-  lookAtStart: [0, 0, 0] as [number, number, number],
-  lookAtEnd: [0, -0.12, -4] as [number, number, number],
-};
-
 export const SCENE_LAYERS: SceneLayer[] = [
   {
     texture: "/assets/village/layer-sky.jpg",
     z: -7,
     parallax: 0.15,
-    scrollDrift: 0.08,
     coverScale: 1.08,
   },
   {
     texture: "/assets/village/layer-back.jpg",
     z: -5,
     parallax: 0.35,
-    scrollDrift: 0.18,
     opacity: 0.88,
     coverScale: 1.06,
   },
@@ -44,14 +28,12 @@ export const SCENE_LAYERS: SceneLayer[] = [
     texture: "/assets/village/hero-scene.png",
     z: -3.2,
     parallax: 0.6,
-    scrollDrift: 0.28,
     coverScale: 1.05,
   },
   {
     texture: "/assets/village/layer-front.jpg",
     z: -1.4,
     parallax: 1,
-    scrollDrift: 0.42,
     opacity: 0.42,
     coverScale: 1.04,
   },
@@ -67,7 +49,3 @@ export const LANTERNS = [
 ] as const;
 
 export const SAKURA_COUNT = 280;
-
-export function easeInOutCubic(t: number) {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-}
