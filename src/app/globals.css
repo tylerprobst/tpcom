@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+:root {
+  --sky-peach: #ffd4a8;
+  --sky-lavender: #c4b5fd;
+  --sky-blue: #93c5fd;
+  --sky-deep: #7eb8e8;
+  --mountain-far: #6b9e8f;
+  --mountain-near: #4a7c6f;
+  --cloud-white: #fff8f0;
+  --wood-warm: #c17f59;
+  --roof-teal: #3d8b7a;
+  --roof-dark: #2d6b5e;
+  --accent-red: #e85d5d;
+  --grass-light: #4ade80;
+  --grass-dark: #22c55e;
+  --path-sand: #e8c9a0;
+  --lantern-glow: #ffb84d;
+}
+
+@theme inline {
+  --font-sans: var(--font-nunito);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  font-family: var(--font-nunito), system-ui, sans-serif;
+  background: var(--sky-deep);
+}
+
+@keyframes drift {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(30px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes drift-reverse {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-25px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes lantern-glow {
+  0%,
+  100% {
+    opacity: 0.75;
+    filter: drop-shadow(0 0 6px var(--lantern-glow));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 14px var(--lantern-glow));
+  }
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(110vh) translateX(40px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.village-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.cloud-drift {
+  animation: drift 45s ease-in-out infinite;
+}
+
+.cloud-drift-slow {
+  animation: drift-reverse 60s ease-in-out infinite;
+}
+
+.cloud-drift-fast {
+  animation: drift 35s ease-in-out infinite;
+}
+
+.lantern-pulse {
+  animation: lantern-glow 3s ease-in-out infinite;
+}
+
+.petal {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50% 0 50% 50%;
+  background: #ffb7c5;
+  opacity: 0;
+  animation: petal-fall linear infinite;
+  pointer-events: none;
+}
+
+.petal-1 {
+  left: 15%;
+  animation-duration: 12s;
+  animation-delay: 0s;
+}
+
+.petal-2 {
+  left: 35%;
+  animation-duration: 14s;
+  animation-delay: 2s;
+}
+
+.petal-3 {
+  left: 55%;
+  animation-duration: 11s;
+  animation-delay: 4s;
+}
+
+.petal-4 {
+  left: 72%;
+  animation-duration: 13s;
+  animation-delay: 1s;
+}
+
+.petal-5 {
+  left: 88%;
+  animation-duration: 15s;
+  animation-delay: 6s;
+}
+
+.petal-6 {
+  left: 45%;
+  animation-duration: 10s;
+  animation-delay: 8s;
+}
