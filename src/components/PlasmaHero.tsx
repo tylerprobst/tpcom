@@ -29,7 +29,7 @@ export default function PlasmaHero() {
       </Canvas>
 
       <p className="pointer-events-none absolute inset-x-0 bottom-8 z-10 text-center text-[11px] tracking-[0.18em] text-[#4a5560] uppercase">
-        Move to disturb
+        Move to shift
       </p>
     </section>
   );

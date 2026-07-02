@@ -2,10 +2,15 @@
 
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
-import { ShaderMaterial, SphereGeometry, type Mesh } from "three";
-import { plasmaFragmentShader, plasmaVertexShader } from "./plasmaShader";
+import { ShaderMaterial, SphereGeometry, type Group, type Mesh } from "three";
+import {
+  lavaCoreFragmentShader,
+  lavaShellFragmentShader,
+  lavaVertexShader,
+} from "./plasmaShader";
 
-const ORB_RADIUS = 0.82;
+const SHELL_RADIUS = 0.82;
+const CORE_RADIUS = 0.52;
 
 type PlasmaOrbProps = {
   pointer: React.MutableRefObject<{ x: number; y: number; active: boolean }>;
@@ -13,39 +18,61 @@ type PlasmaOrbProps = {
   isMobile: boolean;
 };
 
+function createLavaMaterial(
+  fragmentShader: string,
+  phase: number,
+): ShaderMaterial {
+  return new ShaderMaterial({
+    vertexShader: lavaVertexShader,
+    fragmentShader,
+    uniforms: {
+      uTime: { value: 0 },
+      uPointer: { value: [0, 0] },
+      uPointerStrength: { value: 0 },
+      uBreathe: { value: 1 },
+      uPhase: { value: phase },
+    },
+  });
+}
+
 export function PlasmaOrb({ pointer, reducedMotion, isMobile }: PlasmaOrbProps) {
-  const mesh = useRef<Mesh>(null);
+  const group = useRef<Group>(null);
+  const shell = useRef<Mesh>(null);
+  const core = useRef<Mesh>(null);
   const smoothPointer = useRef({ x: 0, y: 0, strength: 0 });
 
-  const geometry = useMemo(() => {
-    const segments = isMobile ? 96 : 128;
-    return new SphereGeometry(ORB_RADIUS, segments, segments);
-  }, [isMobile]);
+  const segments = isMobile ? 112 : 160;
 
-  const material = useMemo(() => {
-    return new ShaderMaterial({
-      vertexShader: plasmaVertexShader,
-      fragmentShader: plasmaFragmentShader,
-      uniforms: {
-        uTime: { value: 0 },
-        uPointer: { value: [0, 0] },
-        uPointerStrength: { value: 0 },
-        uBreathe: { value: 1 },
-      },
-    });
+  const shellGeometry = useMemo(
+    () => new SphereGeometry(SHELL_RADIUS, segments, segments),
+    [segments],
+  );
+  const coreGeometry = useMemo(
+    () => new SphereGeometry(CORE_RADIUS, segments, segments),
+    [segments],
+  );
+
+  const shellMaterial = useMemo(() => {
+    const mat = createLavaMaterial(lavaShellFragmentShader, 0);
+    mat.transparent = true;
+    mat.depthWrite = true;
+    return mat;
   }, []);
+  const coreMaterial = useMemo(
+    () => createLavaMaterial(lavaCoreFragmentShader, 1.8),
+    [],
+  );
 
   useEffect(() => {
     return () => {
-      material.dispose();
-      geometry.dispose();
+      shellMaterial.dispose();
+      coreMaterial.dispose();
+      shellGeometry.dispose();
+      coreGeometry.dispose();
     };
-  }, [material, geometry]);
+  }, [shellMaterial, coreMaterial, shellGeometry, coreGeometry]);
 
   useFrame((state) => {
-    if (!mesh.current) return;
-
-    const mat = mesh.current.material as ShaderMaterial;
     const time = state.clock.elapsedTime;
 
     const targetX = reducedMotion ? 0 : pointer.current.x;
@@ -56,24 +83,50 @@ export function PlasmaOrb({ pointer, reducedMotion, isMobile }: PlasmaOrbProps) 
         ? 1
         : 0;
 
-    smoothPointer.current.x += (targetX - smoothPointer.current.x) * 0.045;
-    smoothPointer.current.y += (targetY - smoothPointer.current.y) * 0.045;
+    smoothPointer.current.x += (targetX - smoothPointer.current.x) * 0.035;
+    smoothPointer.current.y += (targetY - smoothPointer.current.y) * 0.035;
     smoothPointer.current.strength +=
-      (targetStrength - smoothPointer.current.strength) * 0.04;
+      (targetStrength - smoothPointer.current.strength) * 0.03;
 
-    mat.uniforms.uTime.value = time;
-    mat.uniforms.uPointer.value = [
+    const pointerPos: [number, number] = [
       smoothPointer.current.x,
       smoothPointer.current.y,
     ];
-    mat.uniforms.uPointerStrength.value = smoothPointer.current.strength;
-    mat.uniforms.uBreathe.value = reducedMotion ? 0.15 : 1;
+    const strength = smoothPointer.current.strength;
+    const breathe = reducedMotion ? 0.15 : 1;
 
-    mesh.current.rotation.y = time * 0.025;
-    mesh.current.rotation.x = Math.sin(time * 0.15) * 0.03;
+    for (const mat of [shellMaterial, coreMaterial]) {
+      mat.uniforms.uTime.value = time;
+      mat.uniforms.uPointer.value = pointerPos;
+      mat.uniforms.uPointerStrength.value = strength;
+      mat.uniforms.uBreathe.value = breathe;
+    }
+
+    if (group.current) {
+      group.current.rotation.y = time * 0.012;
+      group.current.position.y = Math.sin(time * 0.18) * 0.03;
+    }
+
+    if (core.current) {
+      core.current.position.y = Math.sin(time * 0.22 + 0.5) * 0.06 + 0.02;
+      core.current.position.x = Math.sin(time * 0.15) * 0.02;
+    }
   });
 
   return (
-    <mesh ref={mesh} geometry={geometry} material={material} />
+    <group ref={group}>
+      <mesh
+        ref={core}
+        geometry={coreGeometry}
+        material={coreMaterial}
+        renderOrder={0}
+      />
+      <mesh
+        ref={shell}
+        geometry={shellGeometry}
+        material={shellMaterial}
+        renderOrder={1}
+      />
+    </group>
   );
 }
