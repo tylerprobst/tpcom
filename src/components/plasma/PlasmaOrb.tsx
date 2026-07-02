@@ -2,7 +2,7 @@
 
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
-import { ShaderMaterial, SphereGeometry, Timer, type Mesh } from "three";
+import { IcosahedronGeometry, ShaderMaterial, Timer, type Mesh } from "three";
 import { plasmaFragmentShader, plasmaVertexShader } from "./plasmaShader";
 
 const ORB_RADIUS = 0.82;
@@ -18,11 +18,11 @@ export function PlasmaOrb({ pointer, reducedMotion, isMobile }: PlasmaOrbProps) 
   const smoothPointer = useRef({ x: 0, y: 0, strength: 0 });
   const timer = useRef<Timer | null>(null);
 
-  const segments = isMobile ? 112 : 160;
+  const detail = isMobile ? 7 : 8;
 
   const geometry = useMemo(
-    () => new SphereGeometry(ORB_RADIUS, segments, segments),
-    [segments],
+    () => new IcosahedronGeometry(ORB_RADIUS, detail),
+    [detail],
   );
 
   const material = useMemo(

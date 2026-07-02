@@ -26,9 +26,9 @@ export function PlasmaScene() {
 
   return (
     <Suspense fallback={null}>
-      <ambientLight intensity={0.35} color="#d4e0e8" />
-      <pointLight position={[3, 2, 4]} intensity={1.2} color="#f5e6d0" />
-      <pointLight position={[-3, -1, 2]} intensity={0.5} color="#6b8fa3" />
+      <ambientLight intensity={0.55} color="#c8d4dc" />
+      <pointLight position={[2, 3, 5]} intensity={0.7} color="#f0e8dc" />
+      <pointLight position={[-3, 0, 3]} intensity={0.35} color="#8aa8b8" />
 
       <PlasmaOrb
         pointer={pointer}
