@@ -1,7 +1,5 @@
+import PlasmaHero from "@/components/PlasmaHero";
+
 export default function Home() {
-  return (
-    <main className="flex min-h-screen items-center justify-center">
-      <p className="text-neutral-500">New idea goes here.</p>
-    </main>
-  );
+  return <PlasmaHero />;
 }
