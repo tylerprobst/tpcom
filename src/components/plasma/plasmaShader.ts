@@ -9,7 +9,6 @@ varying vec3 vWorldPosition;
 varying float vDisplacement;
 varying float vFresnel;
 
-// Ashima simplex noise
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 permute(vec4 x) { return mod289(((x * 34.0) + 1.0) * x); }
@@ -75,18 +74,20 @@ float snoise(vec3 v) {
 
 void main() {
   vec3 pos = position;
-  vec3 norm = normal;
+  vec3 norm = normalize(normal);
 
-  float noise1 = snoise(norm * 2.2 + uTime * 0.12);
-  float noise2 = snoise(norm * 4.0 - uTime * 0.08) * 0.5;
-  float organic = noise1 + noise2;
+  // Low-frequency noise only — keeps the surface glob-like
+  float noiseSlow = snoise(norm * 0.9 + uTime * 0.06);
+  float noiseMid = snoise(norm * 1.4 - uTime * 0.04) * 0.4;
+  float organic = noiseSlow * 0.7 + noiseMid * 0.3;
+  organic = smoothstep(-0.8, 0.8, organic);
 
-  vec3 pointerDir = normalize(vec3(uPointer.x, uPointer.y, 0.65));
+  vec3 pointerDir = normalize(vec3(uPointer.x, uPointer.y, 0.75));
   float pointerBias = dot(norm, pointerDir);
-  float pointerWarp = smoothstep(0.2, 1.0, pointerBias) * uPointerStrength;
+  float pointerWarp = smoothstep(0.0, 0.9, pointerBias) * uPointerStrength;
 
-  float breathe = sin(uTime * 0.55) * 0.04 * uBreathe;
-  float displacement = organic * 0.14 + pointerWarp * 0.22 + breathe;
+  float breathe = sin(uTime * 0.45) * 0.018 * uBreathe;
+  float displacement = organic * 0.055 + pointerWarp * 0.09 + breathe;
 
   vec3 newPos = pos + norm * displacement;
   vec4 worldPos = modelMatrix * vec4(newPos, 1.0);
@@ -94,7 +95,7 @@ void main() {
   vNormal = normalize(normalMatrix * norm);
   vWorldPosition = worldPos.xyz;
   vDisplacement = displacement;
-  vFresnel = pow(1.0 - max(dot(vNormal, vec3(0.0, 0.0, 1.0)), 0.0), 2.2);
+  vFresnel = pow(1.0 - abs(dot(vNormal, normalize(vec3(0.0, 0.0, 1.0)))), 1.6);
 
   gl_Position = projectionMatrix * viewMatrix * worldPos;
 }
@@ -110,21 +111,21 @@ varying float vDisplacement;
 varying float vFresnel;
 
 void main() {
-  vec3 coreColor = vec3(0.93, 0.89, 0.82);
-  vec3 midColor = vec3(0.72, 0.78, 0.84);
-  vec3 edgeColor = vec3(0.38, 0.48, 0.56);
+  vec3 coreColor = vec3(0.93, 0.90, 0.84);
+  vec3 midColor = vec3(0.74, 0.79, 0.85);
+  vec3 edgeColor = vec3(0.42, 0.51, 0.58);
 
-  float core = smoothstep(0.02, 0.22, vDisplacement + 0.08);
-  float pulse = sin(uTime * 0.5) * 0.03 + 0.97;
+  float core = smoothstep(-0.02, 0.18, vDisplacement);
+  float pulse = sin(uTime * 0.4) * 0.02 + 0.98;
 
-  vec3 color = mix(edgeColor, midColor, core);
-  color = mix(color, coreColor, core * pulse);
+  vec3 color = mix(edgeColor, midColor, smoothstep(0.0, 0.5, core));
+  color = mix(color, coreColor, smoothstep(0.35, 1.0, core) * pulse);
 
-  float glow = vFresnel * (0.45 + uPointerStrength * 0.2);
-  color += vec3(0.5, 0.62, 0.72) * glow * 0.35;
+  float glow = vFresnel * (0.35 + uPointerStrength * 0.15);
+  color += vec3(0.52, 0.64, 0.74) * glow * 0.28;
 
-  float spec = pow(max(dot(vNormal, normalize(vec3(0.3, 0.5, 1.0))), 0.0), 12.0);
-  color += vec3(0.95, 0.92, 0.88) * spec * 0.25;
+  float spec = pow(max(dot(vNormal, normalize(vec3(0.2, 0.4, 1.0))), 0.0), 5.0);
+  color += vec3(0.95, 0.93, 0.90) * spec * 0.12;
 
   gl_FragColor = vec4(color, 1.0);
 }

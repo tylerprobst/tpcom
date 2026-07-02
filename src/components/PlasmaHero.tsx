@@ -20,7 +20,7 @@ export default function PlasmaHero() {
 
       <Canvas
         className="absolute inset-0 touch-none"
-        camera={{ position: [0, 0, 4.2], fov: 45, near: 0.1, far: 20 }}
+        camera={{ position: [0, 0, 5.2], fov: 40, near: 0.1, far: 20 }}
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: false }}
       >
