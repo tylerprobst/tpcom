@@ -1,13 +1,12 @@
-export const lavaVertexShader = /* glsl */ `
+export const plasmaVertexShader = /* glsl */ `
 uniform float uTime;
 uniform vec2 uPointer;
 uniform float uPointerStrength;
 uniform float uBreathe;
-uniform float uPhase;
 
 varying vec3 vNormal;
 varying vec3 vViewPosition;
-varying float vBulge;
+varying float vDisplacement;
 varying float vFresnel;
 
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -58,103 +57,68 @@ float snoise(vec3 v) {
   return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
 }
 
-// Rounded lava-lamp bulge — always smooth, always outward
-float lavaBulge(vec3 norm, float time, float phase) {
-  float t = time * 0.14 + phase;
-
+float globBulge(vec3 norm, float time) {
+  float t = time * 0.12;
   float theta = atan(norm.y, norm.x);
   float phi = acos(clamp(norm.z, -1.0, 1.0));
 
-  float wave1 = sin(phi * 1.6 + t) * cos(theta * 1.4 + t * 0.6);
-  float wave2 = sin(phi * 2.2 - t * 0.7) * cos(theta * 2.0 - t * 0.4);
-  float drift = snoise(norm * 0.55 + vec3(0.0, t * 0.35, phase));
+  float wave1 = sin(phi * 1.5 + t) * cos(theta * 1.3 + t * 0.5);
+  float wave2 = sin(phi * 2.0 - t * 0.6) * cos(theta * 1.8 - t * 0.35);
+  float drift = snoise(norm * 0.5 + vec3(0.0, t * 0.25, 0.0));
 
-  float raw = wave1 * 0.35 + wave2 * 0.25 + drift * 0.45;
-  raw = smoothstep(-0.35, 0.65, raw);
-  return raw;
+  float raw = wave1 * 0.35 + wave2 * 0.25 + drift * 0.4;
+  return smoothstep(-0.3, 0.6, raw);
 }
 
 void main() {
   vec3 norm = normalize(normal);
   vec3 pos = position;
 
-  float bulge = lavaBulge(norm, uTime, uPhase);
-  float breathe = (sin(uTime * 0.3 + uPhase) * 0.5 + 0.5) * 0.012 * uBreathe;
+  float bulge = globBulge(norm, uTime);
+  float breathe = sin(uTime * 0.35) * 0.01 * uBreathe;
 
-  vec3 pointerDir = normalize(vec3(uPointer.x, uPointer.y, 0.8));
-  float pointerPull = pow(max(dot(norm, pointerDir), 0.0), 1.8) * uPointerStrength;
+  vec3 pointerDir = normalize(vec3(uPointer.x, uPointer.y, 0.75));
+  float pointerPull = pow(max(dot(norm, pointerDir), 0.0), 2.0) * uPointerStrength;
 
-  float displacement = bulge * 0.075 + pointerPull * 0.045 + breathe;
+  float displacement = bulge * 0.065 + pointerPull * 0.04 + breathe;
 
   vec3 newPos = pos + norm * displacement;
   vec4 mvPosition = modelViewMatrix * vec4(newPos, 1.0);
 
   vNormal = normalize(normalMatrix * norm);
   vViewPosition = -mvPosition.xyz;
-  vBulge = bulge;
-  vFresnel = pow(1.0 - max(dot(normalize(vNormal), normalize(vViewPosition)), 0.0), 2.5);
+  vDisplacement = displacement;
+  vFresnel = pow(1.0 - abs(dot(normalize(vNormal), normalize(vViewPosition))), 1.6);
 
   gl_Position = projectionMatrix * mvPosition;
 }
 `;
 
-export const lavaShellFragmentShader = /* glsl */ `
+export const plasmaFragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uPointerStrength;
 
 varying vec3 vNormal;
 varying vec3 vViewPosition;
-varying float vBulge;
+varying float vDisplacement;
 varying float vFresnel;
 
 void main() {
-  vec3 viewDir = normalize(vViewPosition);
+  vec3 coreColor = vec3(0.93, 0.90, 0.84);
+  vec3 midColor = vec3(0.74, 0.79, 0.85);
+  vec3 edgeColor = vec3(0.42, 0.51, 0.58);
 
-  vec3 waxEdge = vec3(0.32, 0.38, 0.46);
-  vec3 waxMid = vec3(0.58, 0.52, 0.62);
-  vec3 waxWarm = vec3(0.82, 0.62, 0.48);
+  float core = smoothstep(-0.02, 0.16, vDisplacement);
+  float pulse = sin(uTime * 0.4) * 0.02 + 0.98;
 
-  float thickness = vFresnel;
-  float inner = smoothstep(0.2, 0.85, vBulge);
+  vec3 color = mix(edgeColor, midColor, smoothstep(0.0, 0.5, core));
+  color = mix(color, coreColor, smoothstep(0.35, 1.0, core) * pulse);
 
-  vec3 color = mix(waxMid, waxEdge, thickness * 0.7);
-  color = mix(color, waxWarm, inner * 0.45);
+  float glow = vFresnel * (0.35 + uPointerStrength * 0.15);
+  color += vec3(0.52, 0.64, 0.74) * glow * 0.28;
 
-  float subsurface = pow(1.0 - thickness, 2.0) * (0.55 + inner * 0.3);
-  color += vec3(0.95, 0.55, 0.32) * subsurface * 0.4;
-
-  float spec = pow(max(dot(vNormal, normalize(vec3(0.1, 0.6, 1.0))), 0.0), 18.0);
-  color += vec3(1.0, 0.96, 0.92) * spec * 0.18;
-
-  float rim = pow(thickness, 1.2) * 0.25;
-  color += vec3(0.45, 0.55, 0.68) * rim;
-
-  float alpha = 0.78 + (1.0 - thickness) * 0.18;
-  gl_FragColor = vec4(color, alpha);
-}
-`;
-
-export const lavaCoreFragmentShader = /* glsl */ `
-uniform float uTime;
-
-varying vec3 vNormal;
-varying vec3 vViewPosition;
-varying float vBulge;
-varying float vFresnel;
-
-void main() {
-  vec3 hotCore = vec3(1.0, 0.52, 0.22);
-  vec3 warmMid = vec3(0.92, 0.38, 0.18);
-  vec3 deep = vec3(0.55, 0.15, 0.08);
-
-  float glow = smoothstep(0.15, 0.9, vBulge);
-  float pulse = sin(uTime * 0.25) * 0.04 + 0.96;
-
-  vec3 color = mix(deep, warmMid, glow);
-  color = mix(color, hotCore, glow * glow * pulse);
-
-  float fresnel = pow(vFresnel, 0.8);
-  color = mix(color, hotCore * 1.1, (1.0 - fresnel) * 0.35);
+  float spec = pow(max(dot(vNormal, normalize(vec3(0.2, 0.4, 1.0))), 0.0), 5.0);
+  color += vec3(0.95, 0.93, 0.90) * spec * 0.12;
 
   gl_FragColor = vec4(color, 1.0);
 }

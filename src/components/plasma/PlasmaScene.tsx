@@ -26,10 +26,9 @@ export function PlasmaScene() {
 
   return (
     <Suspense fallback={null}>
-      <ambientLight intensity={0.28} color="#8a9aaa" />
-      <pointLight position={[0, -1.5, 3.5]} intensity={1.4} color="#ff8844" />
-      <pointLight position={[2, 1.5, 4]} intensity={0.5} color="#ffd4a8" />
-      <pointLight position={[-2.5, 0.5, 2]} intensity={0.35} color="#6b8fa3" />
+      <ambientLight intensity={0.35} color="#d4e0e8" />
+      <pointLight position={[3, 2, 4]} intensity={1.2} color="#f5e6d0" />
+      <pointLight position={[-3, -1, 2]} intensity={0.5} color="#6b8fa3" />
 
       <PlasmaOrb
         pointer={pointer}
@@ -38,7 +37,7 @@ export function PlasmaScene() {
       />
 
       <mesh
-        position={[0, 0, 0.5]}
+        position={[0, 0, 1.5]}
         onPointerMove={(event) => {
           pointer.current.x = event.pointer.x;
           pointer.current.y = event.pointer.y;
