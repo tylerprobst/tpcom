@@ -73,7 +73,7 @@ export default function PortfolioContent() {
   const year = new Date().getFullYear();
 
   return (
-    <div className="pointer-events-none relative z-10">
+    <div className="relative z-10 max-md:pointer-events-auto md:pointer-events-none">
       <div className="mx-auto w-full max-w-6xl px-6 md:px-8">
         <header className="flex items-center justify-between gap-6 border-b border-blue-deep/40 py-6 md:py-8">
           <a
@@ -126,8 +126,11 @@ export default function PortfolioContent() {
                 View GitHub
               </a>
             </div>
-            <p className="mt-10 text-[11px] tracking-[0.18em] text-steel uppercase">
+            <p className="mt-10 text-[11px] tracking-[0.18em] text-steel uppercase max-md:hidden">
               Move through the fluid
+            </p>
+            <p className="mt-10 text-[11px] tracking-[0.18em] text-steel uppercase md:hidden">
+              Scroll to explore · touch open areas for fluid
             </p>
           </div>
 

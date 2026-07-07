@@ -181,18 +181,12 @@ export default function FluidBackground() {
       solverRef.current?.setPointer(uv.x, uv.y, pointer.down, true, false);
     };
 
-    const onTouchMove = (e: TouchEvent) => {
-      e.preventDefault();
-    };
-
     canvas.addEventListener("pointerenter", onEnter);
     canvas.addEventListener("pointerleave", onLeave);
     canvas.addEventListener("pointerdown", onDown, POINTER_OPTIONS);
     canvas.addEventListener("pointermove", onMove, POINTER_OPTIONS);
     canvas.addEventListener("pointerup", releasePointer);
     canvas.addEventListener("pointercancel", releasePointer);
-    canvas.addEventListener("touchmove", onTouchMove, POINTER_OPTIONS);
-
     return () => {
       canvas.removeEventListener("pointerenter", onEnter);
       canvas.removeEventListener("pointerleave", onLeave);
@@ -200,7 +194,6 @@ export default function FluidBackground() {
       canvas.removeEventListener("pointermove", onMove, POINTER_OPTIONS);
       canvas.removeEventListener("pointerup", releasePointer);
       canvas.removeEventListener("pointercancel", releasePointer);
-      canvas.removeEventListener("touchmove", onTouchMove, POINTER_OPTIONS);
     };
   }, []);
 
@@ -211,7 +204,7 @@ export default function FluidBackground() {
     >
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 h-full w-full touch-none"
+        className="absolute inset-0 h-full w-full touch-pan-y md:touch-none"
       />
       {failed && (
         <p className="absolute inset-0 flex items-center justify-center text-sm text-[#6b7580]">
