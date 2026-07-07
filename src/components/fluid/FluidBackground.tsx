@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FluidSolver } from "@/components/fluid/FluidSolver";
+import { MobileGestureLayer } from "@/components/fluid/MobileGestureLayer";
 import {
   createFluidPointer,
   SIM_RES_DESKTOP,
@@ -140,7 +141,8 @@ export default function FluidBackground() {
     };
 
     const onDown = (e: PointerEvent) => {
-      if (activePointerIdRef.current !== null && isTouch(e)) return;
+      if (isTouch(e)) return;
+      if (activePointerIdRef.current !== null) return;
 
       e.preventDefault();
       activePointerIdRef.current = e.pointerId;
@@ -156,24 +158,7 @@ export default function FluidBackground() {
         return;
       }
 
-      if (isTouch(e)) {
-        e.preventDefault();
-        const events = e.getCoalescedEvents?.() ?? [e];
-        let prevX = pointer.targetX;
-        let prevY = pointer.targetY;
-
-        for (const ev of events) {
-          const uv = uvFromEvent(ev);
-          const dx = uv.x - prevX;
-          const dy = uv.y - prevY;
-          prevX = uv.x;
-          prevY = uv.y;
-          pointer.targetX = uv.x;
-          pointer.targetY = uv.y;
-          solverRef.current?.feedTouch(uv.x, uv.y, dx, dy);
-        }
-        return;
-      }
+      if (isTouch(e)) return;
 
       const uv = uvFromEvent(e);
       pointer.targetX = uv.x;
@@ -204,7 +189,11 @@ export default function FluidBackground() {
     >
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 h-full w-full touch-pan-y md:touch-none"
+        className="pointer-events-none absolute inset-0 h-full w-full touch-none md:pointer-events-auto"
+      />
+      <MobileGestureLayer
+        solverRef={solverRef}
+        reducedMotionRef={reducedMotionRef}
       />
       {failed && (
         <p className="absolute inset-0 flex items-center justify-center text-sm text-[#6b7580]">
