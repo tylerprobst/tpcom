@@ -157,7 +157,7 @@ export default function PortfolioContent() {
               Move through the fluid
             </p>
             <p className="mt-10 text-[11px] tracking-[0.18em] text-steel uppercase md:hidden">
-              Swipe up to scroll · drag to stir the fluid
+              Scroll to stir the fluid
             </p>
           </div>
 

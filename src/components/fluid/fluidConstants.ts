@@ -14,6 +14,8 @@ export const POINTER_SMOOTH_RATE = 16;
 export const MAX_POINTER_STEP = 0.016;
 export const MAX_POINTER_STEP_TOUCH = 0.028;
 export const TOUCH_INTENSITY_BOOST = 1.25;
+export const SCROLL_MIN_DELTA = 2;
+export const SCROLL_INTENSITY_SCALE = 0.7;
 
 export type FluidPointer = {
   targetX: number;

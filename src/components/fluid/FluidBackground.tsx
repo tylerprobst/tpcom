@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FluidSolver } from "@/components/fluid/FluidSolver";
-import { MobileGestureLayer } from "@/components/fluid/MobileGestureLayer";
+import { ScrollFluidDriver } from "@/components/fluid/ScrollFluidDriver";
 import {
   createFluidPointer,
   SIM_RES_DESKTOP,
@@ -191,7 +191,7 @@ export default function FluidBackground() {
         ref={canvasRef}
         className="pointer-events-none absolute inset-0 h-full w-full touch-none md:pointer-events-auto"
       />
-      <MobileGestureLayer
+      <ScrollFluidDriver
         solverRef={solverRef}
         reducedMotionRef={reducedMotionRef}
       />
