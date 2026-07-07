@@ -69,6 +69,30 @@ function Panel({
   );
 }
 
+function ProfilePortrait({
+  size,
+  priority = false,
+}: {
+  size: number;
+  priority?: boolean;
+}) {
+  return (
+    <Panel
+      variant="ocean"
+      className="p-2 shadow-[0_0_48px_rgba(74,122,173,0.2)]"
+    >
+      <Image
+        src={withBasePath("/profile.png")}
+        alt="Portrait of Tyler Probst"
+        width={size}
+        height={size}
+        className="rounded-lg"
+        priority={priority}
+      />
+    </Panel>
+  );
+}
+
 export default function PortfolioContent() {
   const year = new Date().getFullYear();
 
@@ -97,6 +121,9 @@ export default function PortfolioContent() {
 
         <section className="grid min-h-[calc(100dvh-5.5rem)] items-center gap-12 pb-16 pt-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
           <div className="max-w-xl">
+            <div className="mb-8 flex justify-center lg:hidden">
+              <ProfilePortrait size={220} priority />
+            </div>
             <SectionLabel>Software Engineer</SectionLabel>
             <h1 className="mt-4 text-[clamp(2rem,5vw,3.25rem)] font-semibold leading-[1.12] tracking-tight text-[#e8eaed]">
               Building clear,{" "}
@@ -135,19 +162,7 @@ export default function PortfolioContent() {
           </div>
 
           <div className="hidden justify-center lg:flex">
-            <Panel
-              variant="ocean"
-              className="p-2 shadow-[0_0_48px_rgba(74,122,173,0.2)]"
-            >
-              <Image
-                src={withBasePath("/profile.png")}
-                alt="Portrait of Tyler Probst"
-                width={360}
-                height={360}
-                className="rounded-lg"
-                priority
-              />
-            </Panel>
+            <ProfilePortrait size={360} priority />
           </div>
         </section>
 
