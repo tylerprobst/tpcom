@@ -1,6 +1,7 @@
 import {
   CURL_STRENGTH,
   DENSITY_DISSIPATION,
+  DENSITY_DISSIPATION_MOBILE,
   FIXED_TIMESTEP,
   INTENSITY_SCALE,
   MAX_FRAME_DELTA,
@@ -154,7 +155,11 @@ export class FluidSolver {
   private gl: GL;
   private canvas: HTMLCanvasElement;
   private simRes: number;
+  private isMobile: boolean;
   private aspect = 1;
+  private displayWidth = 0;
+  private displayHeight = 0;
+  private densityDissipation: number;
 
   private quad: WebGLBuffer;
   private vao: WebGLVertexArrayObject;
@@ -180,7 +185,7 @@ export class FluidSolver {
   private accumulator = 0;
   private pointer = createFluidPointer();
 
-  constructor(canvas: HTMLCanvasElement, simRes: number) {
+  constructor(canvas: HTMLCanvasElement, simRes: number, isMobile = false) {
     const gl = canvas.getContext("webgl2", {
       alpha: false,
       antialias: false,
@@ -197,6 +202,10 @@ export class FluidSolver {
     this.gl = gl;
     this.canvas = canvas;
     this.simRes = simRes;
+    this.isMobile = isMobile;
+    this.densityDissipation = isMobile
+      ? DENSITY_DISSIPATION_MOBILE
+      : DENSITY_DISSIPATION;
 
     this.quad = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.quad);
@@ -276,7 +285,10 @@ export class FluidSolver {
     const w = Math.floor(this.canvas.clientWidth * dpr);
     const h = Math.floor(this.canvas.clientHeight * dpr);
     if (w === 0 || h === 0) return;
+    if (w === this.displayWidth && h === this.displayHeight) return;
 
+    this.displayWidth = w;
+    this.displayHeight = h;
     this.canvas.width = w;
     this.canvas.height = h;
     this.aspect = w / h;
@@ -439,7 +451,7 @@ export class FluidSolver {
       this.dye[1],
       this.velocity[0],
       this.dye[0],
-      DENSITY_DISSIPATION,
+      this.densityDissipation,
       simDt,
     );
     swapDouble(this.dye);

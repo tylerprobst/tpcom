@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FluidSolver } from "@/components/fluid/FluidSolver";
-import { ScrollFluidDriver } from "@/components/fluid/ScrollFluidDriver";
+import { applyScrollSplats } from "@/components/fluid/scrollFluid";
 import {
   createFluidPointer,
   SIM_RES_DESKTOP,
@@ -17,6 +17,8 @@ export default function FluidBackground() {
   const pointerRef = useRef(createFluidPointer());
   const activePointerIdRef = useRef<number | null>(null);
   const reducedMotionRef = useRef(false);
+  const isMobileRef = useRef(false);
+  const lastScrollYRef = useRef(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -24,6 +26,11 @@ export default function FluidBackground() {
   useEffect(() => {
     reducedMotionRef.current = reducedMotion;
   }, [reducedMotion]);
+
+  useEffect(() => {
+    isMobileRef.current = isMobile;
+    lastScrollYRef.current = window.scrollY;
+  }, [isMobile]);
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -50,6 +57,7 @@ export default function FluidBackground() {
       solver = new FluidSolver(
         canvas,
         isMobile ? SIM_RES_MOBILE : SIM_RES_DESKTOP,
+        isMobile,
       );
       solverRef.current = solver;
       setFailed(false);
@@ -59,8 +67,16 @@ export default function FluidBackground() {
     }
 
     let raf = 0;
+    lastScrollYRef.current = window.scrollY;
+
     const loop = () => {
       solver.resize();
+      if (isMobileRef.current && !reducedMotionRef.current) {
+        lastScrollYRef.current = applyScrollSplats(
+          solver,
+          lastScrollYRef.current,
+        );
+      }
       solver.tick(reducedMotionRef.current);
       raf = requestAnimationFrame(loop);
     };
@@ -190,10 +206,6 @@ export default function FluidBackground() {
       <canvas
         ref={canvasRef}
         className="pointer-events-none absolute inset-0 h-full w-full touch-none md:pointer-events-auto"
-      />
-      <ScrollFluidDriver
-        solverRef={solverRef}
-        reducedMotionRef={reducedMotionRef}
       />
       {failed && (
         <p className="absolute inset-0 flex items-center justify-center text-sm text-[#6b7580]">
