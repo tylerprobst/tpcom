@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { withBasePath } from "@/lib/site";
 import {
   contactLinks,
   experience,
@@ -76,7 +77,7 @@ export default function PortfolioContent() {
       <div className="mx-auto w-full max-w-6xl px-6 md:px-8">
         <header className="flex items-center justify-between gap-6 border-b border-blue-deep/40 py-6 md:py-8">
           <a
-            href="/"
+            href={withBasePath("/")}
             className={`text-sm font-semibold text-[#e8eaed] ${interactive} hover:text-blue-light`}
           >
             Tyler Probst
