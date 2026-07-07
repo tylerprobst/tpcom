@@ -1,10 +1,11 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState } from "react";
-import { PlasmaOrb } from "./PlasmaOrb";
+import { PlasmaAssembly } from "./PlasmaAssembly";
+import { createGravityPointer } from "./plasmaConstants";
 
 export function PlasmaScene() {
-  const pointer = useRef({ x: 0, y: 0, active: false });
+  const pointer = useRef(createGravityPointer());
   const [reducedMotion, setReducedMotion] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -30,7 +31,7 @@ export function PlasmaScene() {
       <pointLight position={[2, 3, 5]} intensity={0.7} color="#f0e8dc" />
       <pointLight position={[-3, 0, 3]} intensity={0.35} color="#8aa8b8" />
 
-      <PlasmaOrb
+      <PlasmaAssembly
         pointer={pointer}
         reducedMotion={reducedMotion}
         isMobile={isMobile}
@@ -45,6 +46,7 @@ export function PlasmaScene() {
         }}
         onPointerOut={() => {
           pointer.current.active = false;
+          pointer.current.pullStrength = 0;
         }}
         onPointerDown={() => {
           pointer.current.active = true;

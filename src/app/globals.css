@@ -2,6 +2,15 @@
 
 @theme inline {
   --font-sans: var(--font-inter);
+  --color-navy: #0a1220;
+  --color-navy-panel: #0f1a2e;
+  --color-blue: #4a7aad;
+  --color-blue-bright: #7ba3cc;
+  --color-blue-light: #a3c0dc;
+  --color-blue-deep: #1a3050;
+  --color-blue-mid: #243b5c;
+  --color-indigo: #2d4270;
+  --color-steel: #3d5578;
 }
 
 *,
@@ -11,13 +20,14 @@
 }
 
 html {
-  background: #0e1116;
+  background: #06080c;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   overflow-x: hidden;
   font-family: var(--font-inter), system-ui, sans-serif;
-  background: #0e1116;
+  background: #06080c;
   color: #e8eaed;
 }
