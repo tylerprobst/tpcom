@@ -137,7 +137,7 @@ export default function PortfolioContent() {
               className="p-2 shadow-[0_0_48px_rgba(74,122,173,0.2)]"
             >
               <Image
-                src="/profile.png"
+                src={withBasePath("/profile.png")}
                 alt="Portrait of Tyler Probst"
                 width={360}
                 height={360}
