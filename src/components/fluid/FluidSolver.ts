@@ -10,6 +10,7 @@ import {
   POINTER_SMOOTH_RATE,
   TOUCH_INTENSITY_BOOST,
   PRESSURE_ITERATIONS,
+  MAX_SPLAT_FORCE,
   SPLAT_FORCE,
   SPLAT_RADIUS,
   VELOCITY_DISSIPATION,
@@ -28,6 +29,7 @@ import {
   SPLAT_FRAG,
   VORTICITY_FRAG,
 } from "./fluidShaders";
+import { clampDelta, clampForce, speedIntensity } from "./fluidInput";
 
 type GL = WebGL2RenderingContext;
 
@@ -368,9 +370,13 @@ export class FluidSolver {
     dy: number,
     intensity = 1,
   ): void {
-    const forceX = dx * SPLAT_FORCE * intensity;
-    const forceY = dy * SPLAT_FORCE * intensity;
-    const speed = Math.sqrt(dx * dx + dy * dy);
+    const capped = clampDelta(dx, dy);
+    const cappedIntensity = Math.min(intensity, 1.15);
+    const [forceX, forceY] = clampForce(
+      capped.dx * SPLAT_FORCE * cappedIntensity,
+      capped.dy * SPLAT_FORCE * cappedIntensity,
+      MAX_SPLAT_FORCE,
+    );
 
     this.splat(
       this.velocity[0],
@@ -382,7 +388,10 @@ export class FluidSolver {
     );
     swapDouble(this.velocity);
 
-    const amount = (0.3 + speed * 3.5) * INTENSITY_SCALE;
+    const amount =
+      speedIntensity(capped.speed, 0.2, 2.4, 0.55) *
+      INTENSITY_SCALE *
+      cappedIntensity;
     this.splat(
       this.dye[0],
       this.dye[1],
@@ -604,8 +613,8 @@ export class FluidSolver {
     }
 
     const intensity = p.down
-      ? 0.55 + Math.min(speed * 70, 1.1)
-      : 0.32 + Math.min(speed * 52, 0.8);
+      ? speedIntensity(speed, 0.42, 5.5, 0.9)
+      : speedIntensity(speed, 0.26, 4.2, 0.65);
     this.splatPointer(p.smoothX, p.smoothY, dx, dy, intensity);
   }
 
